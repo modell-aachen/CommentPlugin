@@ -1,8 +1,8 @@
 # Plugin for Foswiki - The Free Open Source Wiki, http://foswiki.org/
 #
 # Copyright (C) 2004 Crawford Currie
-# Copyright (C) 2001-2006 TWiki Contributors. All Rights Reserved.
-# TWiki Contributors
+# Copyright (C) 2001-2006 Foswiki Contributors. All Rights Reserved.
+# Foswiki Contributors
 # are listed in the AUTHORS file in the root of this distribution.
 # NOTE: Please extend that file, not this notice.
 #
@@ -20,12 +20,12 @@
 #
 # See Plugin topic for history and plugin information
 
-package TWiki::Plugins::CommentPlugin;
+package Foswiki::Plugins::CommentPlugin;
 
 use strict;
 
-require TWiki::Func;
-require TWiki::Plugins;
+require Foswiki::Func;
+require Foswiki::Plugins;
 
 use vars qw( $VERSION $RELEASE $SHORTDESCRIPTION $NO_PREFS_IN_TOPIC );
 
@@ -44,8 +44,8 @@ $SHORTDESCRIPTION = 'Allows users to quickly post comments to a page without an 
 sub initPlugin {
     #my ( $topic, $web, $user, $installWeb ) = @_;
 
-    if( $TWiki::Plugins::VERSION < 1.026 ) {
-        TWiki::Func::writeWarning( "CommentPlugin $VERSION requires TWiki::Plugins::VERSION >= 1.026, $TWiki::Plugins::VERSION found." );
+    if( $Foswiki::Plugins::VERSION < 1.026 ) {
+        Foswiki::Func::writeWarning( "CommentPlugin $VERSION requires Foswiki::Plugins::VERSION >= 1.026, $Foswiki::Plugins::VERSION found." );
         return 0;
     }
 
@@ -55,9 +55,9 @@ sub initPlugin {
 sub commonTagsHandler {
     my ( $text, $topic, $web, $meta ) = @_;
 
-    require TWiki::Plugins::CommentPlugin::Comment;
+    require Foswiki::Plugins::CommentPlugin::Comment;
 
-    my $query = TWiki::Func::getCgiQuery();
+    my $query = Foswiki::Func::getCgiQuery();
     return unless( defined( $query ));
 
     return unless $_[0] =~ m/%COMMENT({.*?})?%/o;
@@ -66,22 +66,22 @@ sub commonTagsHandler {
     my $scriptname = $ENV{'SCRIPT_NAME'} || '';
     # SMELL: unreliable
     my $previewing = ($scriptname =~ /\/(preview|gnusave|rdiff)/);
-    TWiki::Plugins::CommentPlugin::Comment::prompt( $previewing,
+    Foswiki::Plugins::CommentPlugin::Comment::prompt( $previewing,
                                                     $_[0], $web, $topic );
 }
 
 sub beforeSaveHandler {
     #my ( $text, $topic, $web ) = @_;
 
-    require TWiki::Plugins::CommentPlugin::Comment;
+    require Foswiki::Plugins::CommentPlugin::Comment;
 
-    my $query = TWiki::Func::getCgiQuery();
+    my $query = Foswiki::Func::getCgiQuery();
     return unless $query;
 
     my $action = $query->param('comment_action');
 
     return unless( defined( $action ) && $action eq 'save' );
-    TWiki::Plugins::CommentPlugin::Comment::save( @_ );
+    Foswiki::Plugins::CommentPlugin::Comment::save( @_ );
 }
 
 1;

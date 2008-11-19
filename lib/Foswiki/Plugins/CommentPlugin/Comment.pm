@@ -1,8 +1,8 @@
 # Plugin for Foswiki - The Free Open Source Wiki, http://foswiki.org/
 #
 # Copyright (C) 2004 Crawford Currie
-# Copyright (C) 2001-2006 TWiki Contributors.
-# All Rights Reserved. TWiki Contributors
+# Copyright (C) 2001-2006 Foswiki Contributors.
+# All Rights Reserved. Foswiki Contributors
 # are listed in the AUTHORS file in the root of this distribution.
 # NOTE: Please extend that file, not this notice.
 #
@@ -22,27 +22,27 @@
 # Original author David Weller, reimplemented by Peter Masiar
 # and again by Crawford Currie
 #
-# This version is specific to TWiki::Plugins::VERSION > 1.026
+# This version is specific to Foswiki::Plugins::VERSION > 1.026
 
 use strict;
 
-use TWiki;
-use TWiki::Plugins;
-use TWiki::Store;
-use TWiki::Attrs;
+use Foswiki;
+use Foswiki::Plugins;
+use Foswiki::Store;
+use Foswiki::Attrs;
 use CGI qw( -any );
 
-package TWiki::Plugins::CommentPlugin::Comment;
+package Foswiki::Plugins::CommentPlugin::Comment;
 
 # PUBLIC save the given comment.
 sub save {
     #my ( $text, $topic, $web ) = @_;
 
-    my $wikiName = TWiki::Func::getWikiName();
-    if( ! TWiki::Func::checkAccessPermission( 'change', $wikiName, '',
+    my $wikiName = Foswiki::Func::getWikiName();
+    if( ! Foswiki::Func::checkAccessPermission( 'change', $wikiName, '',
 											  $_[1], $_[2] ) ) {
         # user has no permission to change the topic
-        throw TWiki::OopsException( 'accessdenied',
+        throw Foswiki::OopsException( 'accessdenied',
                                     def => 'topic_access',
                                     web => $_[2],
                                     topic => $_[1] );
@@ -55,7 +55,7 @@ sub save {
 sub prompt {
     #my ( $previewing, $text, $web, $topic ) = @_;
 
-    my $defaultType = TWiki::Func::getPreferencesValue('COMMENTPLUGIN_DEFAULT_TYPE') || 'above';
+    my $defaultType = Foswiki::Func::getPreferencesValue('COMMENTPLUGIN_DEFAULT_TYPE') || 'above';
 
     my $message = '';
     # Is commenting disabled?
@@ -83,7 +83,7 @@ sub _getTemplateLocation {
     my $templateweb = $web || '';
     if ( $attrtemplatetopic ) {
         my ($templocweb, $temploctopic ) =
-          TWiki::Func::normalizeWebTopicName($templateweb, $attrtemplatetopic);
+          Foswiki::Func::normalizeWebTopicName($templateweb, $attrtemplatetopic);
         $templatetopic = "$templocweb.$temploctopic";
     }
     return $templatetopic;
@@ -96,7 +96,7 @@ sub _handleInput {
 
     $attributes =~ s/^{(.*)}$/$1/ if ( $attributes );
 
-    my $attrs = new TWiki::Attrs( $attributes, 1 );
+    my $attrs = new Foswiki::Attrs( $attributes, 1 );
     my $type =
       $attrs->remove( 'type' ) || $attrs->remove( 'mode' ) || $defaultType;
     my $silent = $attrs->remove( 'nonotify' );
@@ -142,7 +142,7 @@ sub _handleInput {
 
     my $url = '';
     if ( $disable eq '' ) {
-        $url = TWiki::Func::getScriptUrl( $web, $topic, 'save' );
+        $url = Foswiki::Func::getScriptUrl( $web, $topic, 'save' );
     }
 
     my $noform = $attrs->remove('noform') || '';
@@ -212,17 +212,17 @@ sub _getTemplate {
 
     # Get the templates.
     my $templateFile = $templatetopic
-        || TWiki::Func::getPreferencesValue('COMMENTPLUGIN_TEMPLATES')
+        || Foswiki::Func::getPreferencesValue('COMMENTPLUGIN_TEMPLATES')
         || 'comments';
 
     my $templates =
-      TWiki::Func::loadTemplate( $templateFile );
+      Foswiki::Func::loadTemplate( $templateFile );
     if (! $templates ) {
-        TWiki::Func::writeWarning("Could not read template file '$templateFile'");
+        Foswiki::Func::writeWarning("Could not read template file '$templateFile'");
         return;
     }
 
-    my $t = TWiki::Func::expandTemplate( $name );
+    my $t = Foswiki::Func::expandTemplate( $name );
     return "%RED%No such template def TMPL:DEF{$name}%ENDCOLOR%"
       unless ( defined($t) && $t ne '' ) || $warn eq 'off';
 
@@ -243,11 +243,11 @@ sub _buildNewTopic {
     #my ( $text, $topic, $web ) = @_;
     my ( $topic, $web ) = ( $_[1], $_[2] );
 
-    my $query = TWiki::Func::getCgiQuery();
+    my $query = Foswiki::Func::getCgiQuery();
     return unless $query;
 
     my $type = $query->param( 'comment_type' ) ||
-      TWiki::Func::getPreferencesValue('COMMENTPLUGIN_DEFAULT_TYPE') ||
+      Foswiki::Func::getPreferencesValue('COMMENTPLUGIN_DEFAULT_TYPE') ||
           'below';
     my $index = $query->param( 'comment_index' ) || 0;
     my $anchor = $query->param( 'comment_anchor' );
@@ -269,7 +269,7 @@ sub _buildNewTopic {
 
     # Expand common variables in the template, but don't expand other
     # tags.
-    $output = TWiki::Func::expandVariablesOnTopicCreation($output);
+    $output = Foswiki::Func::expandVariablesOnTopicCreation($output);
 
     $output = '' unless defined($output);
 

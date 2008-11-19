@@ -7,9 +7,9 @@ BEGIN {
         unshift @INC, $pc;
     }
 }
-use TWiki::Contrib::Build;
+use Foswiki::Contrib::Build;
 
-@CommentPluginBuild::ISA = ( "TWiki::Contrib::Build" );
+@CommentPluginBuild::ISA = ( "Foswiki::Contrib::Build" );
 
 sub new {
     my $class = shift;
